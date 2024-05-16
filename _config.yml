@@ -1,5 +1,5 @@
 name: "Axellance's blog"
-description: "axellance个人技术博客"
+description: "Axellance个人技术博客，分享记录学习中遇到的问题"
 
 avatar: https://img2.imgtp.com/2024/05/16/8weYEOyR.png
 favicon: https://img2.imgtp.com/2024/05/16/hfbquzcj.png
@@ -25,7 +25,7 @@ footer-links:
   twitter: 
   youtube:
 
-footer-text: Copyright (c) 2024 Pianfan
+footer-text: Copyright (c) 2024 Axellance
 
 url: https://axellance.github.io
 
