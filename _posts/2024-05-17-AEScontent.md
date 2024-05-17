@@ -118,3 +118,10 @@ GMAC 全称是 Galois Message Authentication Code，中文名称为伽罗瓦消�
 ### GCM模式
 
 GCM 全称为 Galois/Counter Mode，可以看出 G 是指 GMAC，C 是指 CTR。它在 CTR 加密的基础上增加 GMAC 的特性，解决了 CTR 不能对加密消息进行完整性校验的问题。
+
+GCM 加密所需数据：明文 P、加密密钥 Key、初始向量 IV、附加消息 F。
+
+1. 将 P 分为 P1、P2、…、Pn，Px 长度 <= 128
+2. 生成累加计数器 c0、c1、c2、…、cn，由密钥 Key 计算出密钥 H
+3. 将 IV、c0 进行运算（连接、加和、异或等）得到 IV_c0，用 Key 加密 IV_c0 得到 IVC0
+4. 将 IV、c1 进行运算（连接、加和、异或等）得到 IV_c1，用 Key 加密 IV_c1 得到 IVC1，将 IVC1、P1 做异或运算得到 C1，用密钥 H 通过 GMAC 算法将附加消息 F 计算出 F1， F1 与 C1 做异或运算得到 FC1
