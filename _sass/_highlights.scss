@@ -17,10 +17,11 @@ pre.highlight {
   border: 1px solid $oc-gray-3;
   border-radius: 3px;
   margin: 1em 0;
-  overflow-x: scroll;
+  overflow-x: auto;
 }
 .highlight::-webkit-scrollbar {
-  width: 10px;
+  width: 4px;
+  height: 4px;
 }
 
 .highlight::-webkit-scrollbar-track {
