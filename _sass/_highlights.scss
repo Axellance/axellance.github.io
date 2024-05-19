@@ -1,6 +1,32 @@
+html::-webkit-scrollbar {
+  width: 10px;
+}
+
+html::-webkit-scrollbar-track {
+  background: rgb(179, 177, 177);
+  border-radius: 10px;
+}
+
+html::-webkit-scrollbar-thumb {
+  background: rgb(136, 136, 136);
+  border-radius: 10px;
+}
+
+html::-webkit-scrollbar-thumb:hover {
+  background: rgb(100, 100, 100);
+  border-radius: 10px;
+}
+
+html::-webkit-scrollbar-thumb:active {
+  background: rgb(68, 68, 68);
+  border-radius: 10px;
+}
+
+
 pre, code {
   font-family: $code-font;
 }
+
 
 code.highlighter-rouge {
   font-size: 90%;
@@ -16,7 +42,7 @@ pre.highlight {
   border: 1px solid $oc-gray-3;
   border-radius: 3px;
   margin: 1em 0;
-  overflow: scroll;
+  overflow-x: scroll;
 }
 
 .highlight  { background: $oc-gray-0; }
