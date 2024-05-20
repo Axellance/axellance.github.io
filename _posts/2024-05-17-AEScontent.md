@@ -3,7 +3,8 @@ title: AES加密模式理解
 author: Axellance
 date: 2024-05-17
 layout: post
-category: Jekyll
+tags: [密码学]
+category: 密码学
 mermaid: true
 ---
 

@@ -3,7 +3,8 @@ title: Python安装后pip无法正常使用
 author: Axellance
 date: 2024-05-17
 layout: post
-category: Jekyll
+category: python
+tags: [python]
 mermaid: true
 ---
 
