@@ -1,8 +1,8 @@
 name: "Axellance's blog"
 description: "Axellance个人技术博客，分享记录学习中遇到的问题"
 
-avatar: https://img2.imgtp.com/2024/05/16/8weYEOyR.png
-favicon: https://img2.imgtp.com/2024/05/16/hfbquzcj.png
+avatar: http://124.71.170.201:15000/file-server/files/avatar_blog.jpg
+favicon: http://124.71.170.201:15000/file-server/files/fish.png
 
 navigation:
   - name: 首页
