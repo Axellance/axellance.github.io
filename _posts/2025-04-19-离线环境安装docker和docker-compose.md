@@ -10,7 +10,7 @@ mermaid: true
 
 内网环境下，安装docker和docker-compose需要自行下载安装包到本地，然后配置docker服务，下面简单说说如何在内网离线安装docker。如果不关心安装过程中的细节，可以直接跳到一键安装和一键卸载。
 
-## 安装
+## 一、安装
 
 ### 1. 下载离线安装包
 
@@ -154,7 +154,7 @@ sudo docker-compose -v
 
 ![](../images/docker-compose.png)
 
-## 一键安装和一键卸载
+## 二、一键安装和一键卸载
 
 创建docker和docker-compose安装脚本，实现一键安装。
 
@@ -267,7 +267,135 @@ echo 'docker-compose卸载成功！！！'
 sh ./docker-uninstall.sh
 ```
 
+## 三、修改docker默认镜像存储位置
 
+docker默认会将镜像拉取到 `/var/lib/docker/` 目录下，位于linux根目录下，如果拉取的镜像服务太多，系统盘可能无法满足容量需求。为应对这一问题，可以在其他目录下挂载硬盘，用来存储镜像。接下来将演示如何把docker镜像地址修改到 `/data` 目录下，具体操作步骤如下：
+
+### 1.迁移镜像
+
+首先，查看docker镜像默认存储地址：
+
+```shell
+docker info
+```
+
+结果如下：
+
+```yaml
+Client:
+ Version:    24.0.5
+ Context:    default
+ Debug Mode: false
+
+Server:
+ Containers: 11
+  Running: 1
+  Paused: 0
+  Stopped: 10
+ Images: 2
+ Server Version: 24.0.5
+ Storage Driver: overlay2
+  Backing Filesystem: extfs
+  Supports d_type: true
+  Using metacopy: false
+  Native Overlay Diff: true
+  userxattr: false
+ Logging Driver: json-file
+ Cgroup Driver: cgroupfs
+ Cgroup Version: 1
+ Plugins:
+  Volume: local
+  Network: bridge host ipvlan macvlan null overlay
+  Log: awslogs fluentd gcplogs gelf journald json-file local logentries splunk syslog
+ Swarm: inactive
+ Runtimes: io.containerd.runc.v2 runc
+ Default Runtime: runc
+ Init Binary: docker-init
+ containerd version:
+ runc version:
+ init version:
+ Security Options:
+  apparmor
+  seccomp
+   Profile: builtin
+ Kernel Version: 5.15.0-139-generic
+ Operating System: Ubuntu 20.04.6 LTS
+ OSType: linux
+ Architecture: x86_64
+ CPUs: 6
+ Total Memory: 15.38GiB
+ Name: iccnsg
+ ID: 530b1091-490b-4df2-97e5-ed4bd55d4382
+ Docker Root Dir: /var/lib/docker
+ Debug Mode: false
+ Experimental: false
+ Insecure Registries:
+  127.0.0.0/8
+ Live Restore Enabled: false
+```
+
+然后，停止docker服务：
+
+```shell
+systemctl stop docker.service
+```
+
+在 `/data` 目录下创建 `docker_disk` 文件夹，用来迁移镜像：
+
+```shell
+mkdir -p /data/docker
+cp /var/lib/docker/* /data/docker/ -r
+```
+
+### 2.修改配置文件
+
+修改 `/etc/docker/daemon.json` 文件：
+
+```shell
+vim /etc/docker/daemon.json
+```
+
+默认情况下，系统中是没有这个文件的，需要新建这个文件并写入以下内容：
+
+```json
+{
+	"data-root": "/data/docker"
+}
+```
+
+保存退出后重启docker服务：
+
+```shell
+systemctl daemon-reload
+systemctl restart docker
+systemctl status docker
+```
+
+### 3.检查docker存储路径是否配置成功
+
+```shell
+docker info
+```
+
+结果应该如下：
+
+```yaml
+Docker Root Dir: /data/docker
+```
+
+启动成功之后，确认之前的镜像是否存在：
+
+```shell
+docker images
+docker ps -a
+```
+
+确定容器启动成功之后，可以删除 `/var/lib/docker/` 目录中的文件，也可以将其备份到其他路径：
+
+```shell
+rm /var/lib/docker/* -rf
+mv /var/lib/docker/* /data/docker_bak
+```
 
 ## 一些废话
 
