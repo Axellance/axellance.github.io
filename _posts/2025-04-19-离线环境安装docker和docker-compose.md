@@ -28,9 +28,9 @@ Linux hadoop03 3.10.0-1160.42.2.el7.x86_64 #1 SMP Tue Sep 7 14:49:57 UTC 2021 x8
 
 第二步，根据架构类型选择docker、docker-compose安装包下载
 
-[docker下载网址]([Index of linux/static/stable/ (docker.com)](https://download.docker.com/linux/static/stable/))
+[docker下载网址](https://download.docker.com/linux/static/stable/)
 
-[docker-compose下载网址]([Tags · docker/compose (github.com)](https://github.com/docker/compose/tags))
+[docker-compose下载网址](https://github.com/docker/compose/tags)
 
 ### 2. 安装docker
 
