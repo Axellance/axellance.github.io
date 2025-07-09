@@ -205,10 +205,40 @@ services:
 
 ```shell
 docker run -it -d \
---name hyperchat-web:
+--name hyperchat \
 -p 16100:16100 \
 -v ./HyperChat:/root/Documents/HyperChat \
 hyperchat-web:latest
 ```
 
 启动容器后，即可通过 `http://<ip>:16100/123456` 访问HyperChat页面了。
+
+### 4. 替换项目打包内容
+
+这样每次在修改前端重新打包为生产模式后，需要重新构建docker镜像，为简化开发过程，将宿主机文件挂载到容器中的启动文件夹`/root/hyperchat`，具体步骤如下：
+
+首先启动容器：
+
+```shell
+docker run -itd --name hyperchat hyperchat-web:latest
+```
+
+然后在本地创建文件夹，将容器内的项目打包内容复制到宿主机：
+
+```shell
+mkdir /data/web/hyperchat
+docker cp hyperchat:/root/hyperchat/* /data/web/hyperchat/*
+```
+
+然后停止并删除容器后正式启动容器：
+
+```shell
+docker stop hyperchat && docker rm hyperchat
+docker run -itd --name hyperchat \
+-p 16100:16100 \
+-v /data/web/hyperchat:/root/hyperchat \
+-v /data/web/Documents:/root/Documents \
+hyperchat-web:latest
+```
+
+后续可以将打包完成后的文件复制到宿主机`/data/web/hyperchat/`目录下，完成前端的替换。
