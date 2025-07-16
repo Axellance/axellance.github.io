@@ -4,7 +4,7 @@ author: Axellance
 date: 2025-06-15
 layout: post
 category: 计算机网络
-tags: [网络,tailscale]
+tags: [网络,tailscale,golang]
 mermaid: true
 ---
 
@@ -62,13 +62,29 @@ go version
 
 #### 2. 通过go安装DERP
 
-运行go下载DERP
+运行go下载DERP，注意这里需要安装1.75左右的版本，如果版本太高，可能会导致设备校验无法通过的问题。
 
 ```shell
 go install tailscale.com/cmd/derper@latest
 ```
 
 这里会访问tailscale官去下载软件包，如果卡住的话，可以切换一下go的镜像源。
+
+通过go env命令永久设置 GOPROXY 代理，使用与go 1.13及以上版本。
+
+```shell
+go env -w GO111MODULE=on
+go env -w GOPROXY=https://goproxy.cn,direct
+```
+
+Linux上也可以：
+
+```shell
+export GO111MODULE=on
+export GOPROXY=https://goproxy.cn,direct
+```
+
+
 
 #### 3. 处理证书文件
 
