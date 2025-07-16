@@ -28,9 +28,15 @@ Linux hadoop03 3.10.0-1160.42.2.el7.x86_64 #1 SMP Tue Sep 7 14:49:57 UTC 2021 x8
 
 第二步，根据架构类型选择docker、docker-compose安装包下载
 
-[docker下载网址](https://download.docker.com/linux/static/stable/)
+`https://download.docker.com/linux/static/stable/`
 
-[docker-compose下载网址](https://github.com/docker/compose/tags)
+`https://github.com/docker/compose/tags`
+
+下载docker-compose时需要访问github，因此可以从阿里云下载docker-compose可执行文件：
+
+`https://mirrors.aliyun.com/docker-toolbox/linux/compose/`
+
+选择合适的版本下载即可。
 
 ### 2. 安装docker
 
