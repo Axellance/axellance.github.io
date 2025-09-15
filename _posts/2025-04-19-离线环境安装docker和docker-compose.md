@@ -403,6 +403,56 @@ rm /var/lib/docker/* -rf
 mv /var/lib/docker/* /data/docker_bak
 ```
 
+## 四、允许普通用户执行docker命令
+
+### 1. 问题描述
+
+默认情况下，Docker守护进程 `dockerd` 以root权限运行，因为它需要直接操作内核功能（namespaces、cgroups、网络栈、存储驱动等），这些都需要特权用户权限。
+
+而Docker客户端（`docker`命令）本质上只是通过Unix Socket `/var/run/docker.sock` 与 Docker 守护进程通信。这个socket默认只有`root` 和 `docker`用户组可以访问，所以普通用户不能直接运行docker命令。
+
+### 2. 解决办法
+
+1. 查看docker.sock的权限：
+
+	```bash
+	ls -alh /var/run/docker.sock
+	```
+	
+	一般是：
+	
+	```bash
+	srw-rw---- 1 root docker 0 9月  11 23:16 /var/run/docker.sock	
+	```
+
+​	可以看到socket属于 `root:docker`，权限是660.
+
+2. 创建docker用户组（如果没有的话）：
+
+   ```bash
+   sudo groupadd docker
+   ```
+
+3. 把普通用户加入docker组里：
+
+   ```bash
+   sudo usermod -aG docker $USER
+   ```
+
+4. 让组成员生效：
+
+   ```bash
+   newgrp docker
+   ```
+
+5. 测试：
+
+   ```bash
+   docker ps
+   ```
+
+   如果能够正常执行，就说明配置成功。
+
 ## 一些废话
 
 其实安装包方式安装docker步骤非常简单，但是安装过程中可能会出现各种各样的错误，所以最好严格按照教程操作，因为安装docker只是第一步，后面通过docker部署各种各样的应用才是我们最主要的目的。
