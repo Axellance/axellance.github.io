@@ -94,4 +94,96 @@ ss src 10.0.0.0/24
 ss -tn dst 192.168.2.105 dport == :3306
 ```
 
-先学到这，后面再写一些通过自动化脚本。
+### 4. UNIX域套接字过滤（本地进程通信）
+
+```shell
+#查看mysql本地套接字连接，排查本地程序通过sock文件连接mysql（不走端口号）
+ss -x src /var/run/mysqld/mysqld.sock
+#查看X11相关本地连接（图形化）
+ss -x src /tmp/.X11-unix/*
+```
+
+## 四、ss实战场景：线上问题排查定位
+
+### 场景1. 快速定位端口占用（服务启动失败常用）
+
+服务起不来，提示端口被占用，用 `ss` 快速定位占用端口进程：
+
+```shell
+# 查8080端口的占用进程（-n 数字， -l 监听，-p 进程）
+ss -tlnp | grep :8080
+```
+
+### 场景2. 统计连接状态（判断服务器网络健康度）
+
+不用 `awk` 统计，`-s` 直接输出总览，快速判断 time-wait/close-wait异常：
+
+```shell
+ss -s
+```
+
+输出结果如下：
+
+![ss-s](../images/ss-s.png)
+
+输出解读：
+
+- tcp总连接数，已连接、关闭、孤儿、timewait数量
+- udp/raw/inet套接字统计
+- timewait过多：调优tcp_tw_reuse/tcp_tw_recycle，后者仅用于旧版本内核
+- closewait过多：应用未正常关闭连接，代码bug
+
+### 场景3. 排查长连接/超时（看tcp定时器）
+
+`-o` 显示定时器信息，排查心跳、超时、半连接问题：
+
+```shell
+ss -ton state established
+```
+
+![](../images/ss-ton.png)
+
+### 场景4. TCP内部细节调优（拥塞、重传）
+
+`-i` 输出tcp内部信息，适合网络性能调优：
+
+```shell
+ss -ti state established
+```
+
+可查看：滑动窗口、拥塞控制算法、重传次数、RTT等。
+
+这里需要对TCP协议有很深的理解，不然可能看不懂这些数据的含义，无法通过这些数据来判断网络是否处于正常状态。
+
+### 场景5. 统计高并发连接数
+
+结合`awk`快速统计单ip连接数，排查恶意访问：
+
+```shell
+ss -tn state established | awk '{ print $4 }' | cut -d: -f1 | sort | uniq -c | sort -nr
+```
+
+如何理解这个连续用了多个管道的命令呢？比较原始的办法是不断去添加管道，比如：
+
+```shell
+ss -tn state established
+ss -tn state established | awk '{ print $ 4}'
+ss -tn state established | awk '{ print $ 4}' | cut -d: f1
+ss -tn state established | awk '{ print $ 4}' | cut -d: f1 | sort
+ss -tn state established | awk '{ print $ 4}' | cut -d: f1 | sort | uniq -c
+ss -tn state established | awk '{ print $ 4}' | cut -d: f1 | sort | uniq -c | sort -nr
+```
+
+这样执行下来，可以清晰看到输入管道和管道输出的内容，可以快速整明白每个命令的作用。
+
+需要注意的是，`uniq -c` 这条命令可以去重并统计数量，但并非全文统计，而是比较两个相邻的行是否重复，因此需要在进入这个管道之前，再过一个`sort`管道。
+
+## 五、避坑要点
+
+1. `-p`需要root权限，普通用户看不到进程名/pid
+2. 优先用`-n`，不加会反向解析域名，大幅减慢速度，线上必加
+3. tcp/udp分清楚，查udp必须加 `-u`，默认只显示 tcp
+4. 状态拼写准确，time-wait、close-wait带横杠，不能写错
+5. 过滤条件加引号，组合过滤（or/and）必须使用单引号包裹，避免shell解析错误
+
+`ss`不是`netstat`的平替，而是升级款的更快、更准、更强大。掌握本文的高级过滤、状态排查、脚本化用法，线上端口占用、连接异常、高并发瓶颈，都能一键定位。
