@@ -32,3 +32,66 @@
 
 
 </html>
+
+<script>
+  document.addEventListener('DOMContentLoaded', function() {
+    const codeBlocks = document.querySelectorAll('pre.highlight');
+    
+    codeBlocks.forEach(function(block) {
+      const button = document.createElement('button');
+      button.className = 'copy-btn';
+      button.textContent = '复制';
+      
+      button.addEventListener('click', function() {
+        const code = block.querySelector('code');
+        if (code) {
+          const text = code.innerText || code.textContent;
+          
+          if (navigator.clipboard && navigator.clipboard.writeText) {
+            navigator.clipboard.writeText(text).then(function() {
+              button.textContent = '已复制!';
+              button.classList.add('copied');
+              
+              setTimeout(function() {
+                button.textContent = '复制';
+                button.classList.remove('copied');
+              }, 2000);
+            }).catch(function(err) {
+              console.error('复制失败:', err);
+              button.textContent = '失败';
+              
+              setTimeout(function() {
+                button.textContent = '复制';
+              }, 2000);
+            });
+          } else {
+            const textarea = document.createElement('textarea');
+            textarea.value = text;
+            textarea.style.position = 'fixed';
+            textarea.style.opacity = '0';
+            document.body.appendChild(textarea);
+            textarea.select();
+            
+            try {
+              document.execCommand('copy');
+              button.textContent = '已复制!';
+              button.classList.add('copied');
+            } catch (err) {
+              console.error('复制失败:', err);
+              button.textContent = '失败';
+            }
+            
+            document.body.removeChild(textarea);
+            
+            setTimeout(function() {
+              button.textContent = '复制';
+              button.classList.remove('copied');
+            }, 2000);
+          }
+        }
+      });
+      
+      block.appendChild(button);
+    });
+  });
+</script>

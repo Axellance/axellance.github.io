@@ -105,3 +105,35 @@ pre.highlight {
 .highlight .vg { color: #008080 } /* Name.Variable.Global */
 .highlight .vi { color: #008080 } /* Name.Variable.Instance */
 .highlight .il { color: #009999 } /* Literal.Number.Integer.Long */
+
+// Copy code button
+pre.highlight {
+  position: relative;
+  
+  .copy-btn {
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    padding: 4px 8px;
+    background-color: rgba(0, 0, 0, 0.6);
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    cursor: pointer;
+    font-size: 12px;
+    opacity: 0;
+    transition: opacity 0.2s;
+    
+    &:hover {
+      background-color: rgba(0, 0, 0, 0.8);
+    }
+    
+    &.copied {
+      background-color: #28a745;
+    }
+  }
+  
+  &:hover .copy-btn {
+    opacity: 1;
+  }
+}
